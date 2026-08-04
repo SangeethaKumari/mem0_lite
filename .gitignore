@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments & secrets
+.venv
+.env
+.env.*
+!.env.example
+
+# Local databases & artifacts
+chroma_db/
+**/chroma_db/
+*.sqlite3

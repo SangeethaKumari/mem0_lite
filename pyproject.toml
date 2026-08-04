@@ -1,0 +1,32 @@
+[project]
+name = "mem0-lite"
+version = "0.1.0"
+description = "mem0_flight_demo"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "chromadb>=1.5.9",
+    "google-adk>=2.6.1",
+    "litellm>=1.95.0",
+    "mem0ai>=2.0.15",
+    "sentence-transformers>=5.6.1",
+    "svlearn-bootcamp>=0.1.7",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+# If you also build sdists and want data included:
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    # ... other includes like README, pyproject.toml, etc.
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mem0_flight"]

@@ -22,6 +22,21 @@ Throughout the demo, three friends illustrate strict user memory isolation:
 
 ---
 
+## ✨ Core Pillars & Features
+
+Mem0 relies on six fundamental architectural pillars:
+
+1. **Automatic Fact Extraction**: Distills structured facts, preferences, and decisions instead of saving full transcripts verbatim.
+2. **Semantic Search**: Vector embeddings enable retrieval by meaning, not just keyword matches.
+3. **Entity Linking**: Connects people, places, and concepts across memories for richer context.
+4. **Additive Storage**: Preserves historical memory context while accepting new updates.
+5. **Managed Infrastructure**: Vector storage, embedding generation, and indexing are fully automated.
+6. **Dynamic Updates**: Keeps memory synchronized as user preferences change over time.
+
+> **Main Idea**: *Extract useful facts $\rightarrow$ Store them $\rightarrow$ Retrieve the most relevant ones later with semantic search.*
+
+---
+
 ## ⏳ Memory Organization: Lifetime Layers vs. Storage Types
 
 Mem0 separates memory into **layers based on lifetime (duration)**, while keeping classic memory types stored together inside long-term storage:
@@ -43,16 +58,6 @@ graph TD
 
     U_MEM & O_MEM --> InsideLongTerm
 ```
-
-### Breakdown:
-1. **Memory Layers by Lifetime**:
-   - **Conversation Memory**: Current turn context (very short-term).
-   - **Session Memory (`run_id`)**: Task context (minutes to hours).
-   - **User Memory (`user_id`)**: Personal facts tied to a person (weeks or longer).
-   - **Organizational / Agent Memory (`agent_id`)**: Shared rules across agents.
-2. **Inside Long-Term Storage**:
-   - Mem0 stores classic **Episodic Memories** (summaries of past events) and **Semantic Memories** (facts and relationships) together in long-term storage.
-   - When searching, both episodic and semantic memories are retrieved together.
 
 ---
 

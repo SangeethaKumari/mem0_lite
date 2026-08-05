@@ -1,6 +1,6 @@
 # 🧠 Understanding Mem0: The AI Memory Layer
 
-A comprehensive overview of what **Mem0** is, the problem it solves compared to standard RAG pipelines, how layers are structured by lifetime, and how it works mechanically under the hood.
+A comprehensive overview of what **Mem0** is, its core capabilities, memory layer lifetimes, RAG comparison, and mechanical execution pipeline.
 
 ---
 
@@ -13,7 +13,22 @@ A comprehensive overview of what **Mem0** is, the problem it solves compared to 
 
 ---
 
-## ⏳ 2. How Mem0 Organizes Memory: Lifetimes vs. Classic Types
+## ✨ 2. Core Architectural Pillars & Features
+
+Besides memory layers, Mem0 provides six key infrastructure features:
+
+1. **Automatic Fact Extraction**: When you add a message, Mem0 automatically extracts useful facts, preferences, and decisions instead of storing full dialogue transcripts verbatim.
+2. **Semantic Search**: Memories are vectorized so you retrieve them by semantic meaning rather than exact keyword matches.
+3. **Entity Linking**: People, places, and concepts are linked across memories to build richer context during retrieval.
+4. **Additive Storage**: New memories are added while preserving historical context, ensuring history is preserved over time.
+5. **Managed Infrastructure**: Vector storage, embedding generation, and search indexing are handled automatically.
+6. **Dynamic Updates**: Memories update dynamically as users interact with the agent over time.
+
+> **The Core Idea**: *Extract useful facts $\rightarrow$ Store them $\rightarrow$ Retrieve the most relevant ones later with semantic search.*
+
+---
+
+## ⏳ 3. How Mem0 Organizes Memory: Lifetimes vs. Classic Types
 
 Mem0 organizes memory into **layers based on lifetime** (how long a memory lasts). Within long-term storage, classic cognitive memory types are kept together:
 
@@ -49,7 +64,7 @@ graph TD
 
 ---
 
-## 💡 3. The Problem Mem0 Solves: RAG vs. Mem0
+## 💡 4. The Problem Mem0 Solves: RAG vs. Mem0
 
 | Feature | Standard RAG Pipeline | Mem0 Memory Infrastructure |
 | :--- | :--- | :--- |
@@ -61,7 +76,7 @@ graph TD
 
 ---
 
-## ⚙️ 4. How Mem0 Works Mechanically
+## ⚙️ 5. How Mem0 Works Mechanically
 
 ```mermaid
 flowchart TD

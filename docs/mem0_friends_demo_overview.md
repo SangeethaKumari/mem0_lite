@@ -22,29 +22,37 @@ Throughout the demo, three friends illustrate strict user memory isolation:
 
 ---
 
-## 🧠 Memory Scopes vs. Memory Types (`memory_type`)
+## ⏳ Memory Organization: Lifetime Layers vs. Storage Types
 
-It is crucial to distinguish between **who a memory belongs to** (Entity Scope) and **what kind of memory it is** (Memory Type):
+Mem0 separates memory into **layers based on lifetime (duration)**, while keeping classic memory types stored together inside long-term storage:
 
 ```mermaid
 graph TD
-    subgraph Dimension1 ["1. Entity Scope (WHO / WHERE)"]
-        U_ID["user_id Scope<br/>Personal facts & preferences"]
-        A_ID["agent_id Scope<br/>Agent persona & behavioral guidelines"]
-        R_ID["run_id Scope<br/>Transient session context"]
+    subgraph Lifetimes ["1. Layers by Lifetime (Duration)"]
+        C_MEM["Conversation Memory<br/>Very short-term (current turn)"]
+        S_MEM["Session Memory (run_id)<br/>Short-term task context (minutes to hours)"]
+        U_MEM["User Memory (user_id)<br/>Long-term personal knowledge (weeks or longer)"]
+        O_MEM["Organizational / Agent Memory (agent_id)<br/>Shared knowledge across multiple agents"]
     end
 
-    subgraph Dimension2 ["2. Memory Type (WHAT KIND OF MEMORY)"]
-        SEM["Semantic Memory (DEFAULT)<br/>Extracted facts & knowledge<br/>e.g. 'Maya likes hiking'"]
-        EPI["Episodic Memory (DEFAULT)<br/>Events & conversation logs<br/>e.g. 'User hiked on Aug 1-2'"]
-        PRO["Procedural Memory (OPT-IN)<br/>Agent behavior & workflow rules<br/>Requires agent_id<br/>e.g. 'Always double check safety specs'"]
+    subgraph InsideLongTerm ["2. Inside Long-Term Storage"]
+        EPI["Episodic Memories<br/>Summaries of past interactions"]
+        SEM["Semantic Memories<br/>Facts & relationships"]
+        PRO["Procedural Memories<br/>Agent behavior rules (Opt-in)"]
     end
+
+    U_MEM & O_MEM --> InsideLongTerm
 ```
 
-### Key Differences & Rules:
-- **Semantic & Episodic Memories (Default)**: Created automatically by `client.add()`. You don't have to request them — Mem0's extraction engine generates both during normal conversation processing.
-- **Procedural Memory (Opt-in)**: Created explicitly by passing `memory_type="procedural_memory"`.
-  - **Requirement**: **Requires `agent_id`**. Procedural memory defines *"how the assistant should behave"*, which is agent-scoped rather than person-scoped.
+### Breakdown:
+1. **Memory Layers by Lifetime**:
+   - **Conversation Memory**: Current turn context (very short-term).
+   - **Session Memory (`run_id`)**: Task context (minutes to hours).
+   - **User Memory (`user_id`)**: Personal facts tied to a person (weeks or longer).
+   - **Organizational / Agent Memory (`agent_id`)**: Shared rules across agents.
+2. **Inside Long-Term Storage**:
+   - Mem0 stores classic **Episodic Memories** (summaries of past events) and **Semantic Memories** (facts and relationships) together in long-term storage.
+   - When searching, both episodic and semantic memories are retrieved together.
 
 ---
 

@@ -1,6 +1,6 @@
-# Mem0 Architecture & System Component Diagram
+# 🧠 Mem0 Friends Demo — Architecture & Component Diagram
 
-This document presents the system architecture, component layout, data flow, and read/write path lifecycles across both **Local Open-Source (`Memory`)** and **Cloud Hosted (`MemoryClient`)** modes.
+This document presents the system architecture, component layout, data flow, and read/write path lifecycles strictly for the **Mem0 Friends Demo Series (Phases 1–5)**.
 
 ---
 
@@ -8,9 +8,12 @@ This document presents the system architecture, component layout, data flow, and
 
 ```mermaid
 graph TB
-    subgraph ClientLayer ["Client & Application Layer"]
-        NB1["BlackBox Notebook Series<br/>(Phases 1–5)"]
-        NB2["Friends Demo Notebook Series<br/>(mem0_friends_phase1..5.ipynb)"]
+    subgraph ClientLayer ["Client & Application Layer (Friends Demo Notebooks)"]
+        NB1["Phase 1: Core Features<br/>(mem0_friends_phase1_features.ipynb)"]
+        NB2["Phase 2: RAG & Scoping<br/>(mem0_friends_phase2_generation_conflict_scoping.ipynb)"]
+        NB3["Phase 3: Read Path & Scores<br/>(mem0_friends_phase3_readpath.ipynb)"]
+        NB4["Phase 4: Temporal Decay<br/>(mem0_friends_phase4_decay.ipynb)"]
+        NB5["Phase 5: Auto-Operations<br/>(mem0_friends_phase5_add_update_delete_noop.ipynb)"]
         AWM["answer_with_memory()<br/>RAG Generation Pipeline"]
     end
 
@@ -40,8 +43,7 @@ graph TB
         end
     end
 
-    NB1 -->|"Local / Cloud"| M0_CLIENT & OSS_MEM
-    NB2 -->|"Cloud API Key"| M0_CLIENT
+    NB1 & NB2 & NB3 & NB4 & NB5 -->|"Cloud API Key"| M0_CLIENT
     AWM -->|"1. Search"| M0_CLIENT
     AWM -->|"2. LLM Completion"| CFG
 

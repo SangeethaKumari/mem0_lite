@@ -1,11 +1,11 @@
-# 🧠 Mem0 AI Memory Architecture — Live Demo Overview
+# 🌟 Mem0 Friends Demo — Complete Executive Overview
 
 > **Presentation & Showcase Guide**  
-> *A 5-Phase Walkthrough of Long-Term Memory for AI Agents*
+> *A 5-Phase Walkthrough of Long-Term AI Memory for AI Agents*
 
 ---
 
-## 🎯 Executive Summary & Purpose
+## 🎯 Purpose & Story Overview
 
 Standard LLMs are **stateless** — every new conversation resets context.  
 **Mem0** provides a persistent, dynamic memory layer that allows AI applications to:
@@ -14,49 +14,73 @@ Standard LLMs are **stateless** — every new conversation resets context.
 3. **Scope & Isolate Data**: Keep individual user, agent, and session memories strictly segregated.
 4. **Resolve Conflicts**: Reconcile changing user preferences over time.
 
+### 👥 The Demo Characters & User Isolation
+Throughout the demo, three friends illustrate strict user memory isolation:
+- 🏔️ **Maya**: Hikes in the Rockies, takes pottery on Tuesdays, later switches to painting.
+- 🍳 **Jordan**: Cooks Italian dinners, plays jazz piano to unwind.
+- 🥜 **Sam**: Plays video games, has a **peanut allergy** (safety-critical constraint).
+
 ---
 
-## 🏗️ 1. High-Level System Architecture
+## 🏗️ High-Level Architecture Diagram
 
 ```mermaid
 graph TB
-    subgraph Inputs ["1. Input Layer"]
-        M_USER["Maya<br/>(Hiking, Pottery)"]
-        J_USER["Jordan<br/>(Cooking, Jazz Piano)"]
-        S_USER["Sam<br/>(Gaming, Peanut Allergy)"]
+    subgraph ClientLayer ["Client & Application Layer (Friends Demo Notebooks)"]
+        NB1["Phase 1: Core Features<br/>(mem0_friends_phase1_features.ipynb)"]
+        NB2["Phase 2: RAG & Scoping<br/>(mem0_friends_phase2_generation_conflict_scoping.ipynb)"]
+        NB3["Phase 3: Read Path & Scores<br/>(mem0_friends_phase3_readpath.ipynb)"]
+        NB4["Phase 4: Temporal Decay<br/>(mem0_friends_phase4_decay.ipynb)"]
+        NB5["Phase 5: Auto-Operations<br/>(mem0_friends_phase5_add_update_delete_noop.ipynb)"]
+        AWM["answer_with_memory()<br/>RAG Generation Pipeline"]
     end
 
-    subgraph Mem0Pipeline ["2. Mem0 Core Memory Pipeline"]
-        LLM_EXT["Extraction Engine<br/>(LLM Fact Summarizer)"]
-        VEC_EMB["Vector Embeddings<br/>(sentence-transformers)"]
-        VEC_DB[("Vector Storage & Metadata<br/>ChromaDB / Mem0 Cloud")]
+    subgraph LLMConfigLayer ["Lab Configuration & LLM Adapter"]
+        CFG["lab_llm_config.py"]
+        ENV[".env Configuration<br/>(OPENAI_API_KEY, HF_TOKEN, MEM0_API_KEY)"]
+        ADK["Google ADK LiteLlm Integration"]
     end
 
-    subgraph MemoryLayers ["3. Multi-Entity Memory Scopes"]
-        U_LAYER["User Scope (user_id)<br/>Profiles, preferences, facts"]
-        A_LAYER["Agent Scope (agent_id)<br/>Persona rules, system behaviors"]
-        R_LAYER["Run Scope (run_id)<br/>Transient session context"]
+    subgraph MemoryPipelines ["Mem0 Pipeline Engine (Write & Read Paths)"]
+        WRITE_PATH["Write Path (add)<br/>• LLM Fact Summarizer<br/>• SentenceTransformers Embedding<br/>• Auto-Deduplication Engine"]
+        READ_PATH["Read Path (search / get_all)<br/>• Cosine Vector Similarity<br/>• BM25 Keyword Scoring<br/>• Score Threshold & Top-K Cutoff<br/>• Temporal Decay Reranker (0.3x-1.5x)"]
+        AUTO_OPS["Auto-Decision Engine<br/>• ADD | UPDATE | DELETE | NOOP"]
     end
 
-    subgraph Generation ["4. RAG Generation & Output"]
-        SEARCH["Semantic Search & Filtering"]
-        PROMPT["System Prompt Injection"]
-        ANSWER["Context-Aware Response"]
+    subgraph StorageModes ["Storage Execution Modes"]
+        subgraph ModeA ["Mode A: Local Open-Source (Memory.from_config)"]
+            OSS_MEM["mem0ai OSS Core"]
+            CHROMA[("Local ChromaDB<br/>./chroma_db")]
+            LAB_VLLM["Lab vLLM Endpoint<br/>http://10.0.10.51:8000/v1<br/>(openai/gpt-oss-20b)"]
+        end
+
+        subgraph ModeB ["Mode B: Cloud Hosted (MemoryClient)"]
+            M0_CLIENT["MemoryClient (REST SDK)"]
+            M0_CLOUD["Mem0 Cloud Platform API<br/>https://api.mem0.ai/v3/"]
+            M0_ASYNC["Async Cloud Queue<br/>(PENDING -> COMPLETED)"]
+        end
     end
 
-    M_USER --> LLM_EXT
-    J_USER --> LLM_EXT
-    S_USER --> LLM_EXT
+    NB1 & NB2 & NB3 & NB4 & NB5 -->|"Cloud API Key"| M0_CLIENT
+    AWM -->|"1. Search"| M0_CLIENT
+    AWM -->|"2. LLM Completion"| CFG
 
-    LLM_EXT --> VEC_EMB --> VEC_DB
-    VEC_DB --> U_LAYER & A_LAYER & R_LAYER
+    CFG -->|"load_lab_env()"| ENV
+    CFG -->|"complete()"| LAB_VLLM
+    CFG -->|"LiteLlm"| ADK
 
-    U_LAYER & A_LAYER & R_LAYER --> SEARCH --> PROMPT --> ANSWER
+    M0_CLIENT --> WRITE_PATH & READ_PATH
+    WRITE_PATH --> AUTO_OPS --> M0_CLOUD
+    READ_PATH --> M0_CLOUD
+    M0_CLOUD --> M0_ASYNC
+
+    OSS_MEM --> CHROMA
+    OSS_MEM -->|"Extract Facts"| LAB_VLLM
 ```
 
 ---
 
-## 🗺️ 2. The 5-Phase Demo Roadmap
+## 🗺️ The 5-Phase Demo Roadmap
 
 ```mermaid
 flowchart LR
@@ -68,49 +92,31 @@ flowchart LR
 
 ---
 
-## 👥 3. Live Demo Character Profiles (User Isolation Showcase)
+## 🚀 5-Phase Walkthrough Details
 
-During the demo, three friends illustrate strict user memory isolation:
+### 1️⃣ Phase 1 — Core Features & Lifecycle ([mem0_friends_phase1_features.ipynb](file:///Users/sangeetha/SV-Summer2026/agents/lab/mem0_lite/docs/notebooks/mem0_friends_phase1_features.ipynb))
+- **Automatic Fact Extraction**: Pass raw chat sentences $\rightarrow$ Mem0 extracts clean facts automatically.
+- **Strict User Isolation**: `user_id` ensures Maya's, Jordan's, and Sam's memories never cross paths.
+- **Explicit CRUD**: `update()` and `delete()` memories in-place using `memory_id`.
+- **Metadata Tagging**: Filter memories by custom key-value pairs (e.g. `topic: "cooking"`).
 
-| Friend | Stored Facts | Memory Scope Filter |
-| :--- | :--- | :--- |
-| **Maya** | 🏔️ Hiking in Rockies \| 🏺 Pottery class on Tuesdays | `filters={"user_id": "maya"}` |
-| **Jordan** | 🍳 Cooking Italian dinners \| 🎹 Plays jazz piano | `filters={"user_id": "jordan"}` |
-| **Sam** | 🎮 Plays video games \| 🥜 Peanut allergy (Safety critical) | `filters={"user_id": "sam"}` |
+### 2️⃣ Phase 2 — RAG Generation & Multi-Entity Scoping ([mem0_friends_phase2_generation_conflict_scoping.ipynb](file:///Users/sangeetha/SV-Summer2026/agents/lab/mem0_lite/docs/notebooks/mem0_friends_phase2_generation_conflict_scoping.ipynb))
+- **`answer_with_memory()`**: Combine vector retrieval with LLM completion to answer questions naturally.
+- **Multi-Entity Layers**: Segregate preferences into `user_id` (personal facts), `agent_id` (system compliance/safety rules), and `run_id` (transient session history).
 
-> [!IMPORTANT]
-> **Key Showcase Highlight**: Running the exact same query (*"What are this person's hobbies?"*) returns 3 completely different, isolated responses based strictly on `user_id`.
+### 3️⃣ Phase 3 — The Read Path & Score Tuning ([mem0_friends_phase3_readpath.ipynb](file:///Users/sangeetha/SV-Summer2026/agents/lab/mem0_lite/docs/notebooks/mem0_friends_phase3_readpath.ipynb))
+- **Inspect Scores**: View composite similarity scores ($0.05$ to $0.35$ scale).
+- **Thresholding & Top-K**: Use a score cutoff (e.g. `0.25`) + `top_k` limit to keep prompt context clean.
 
----
+### 4️⃣ Phase 4 — Temporal Decay & Recency ([mem0_friends_phase4_decay.ipynb](file:///Users/sangeetha/SV-Summer2026/agents/lab/mem0_lite/docs/notebooks/mem0_friends_phase4_decay.ipynb))
+- **Time-Weighted Recency**: Enable `decay=True`. Frequently accessed/recent memories get up to a `1.5x` score boost, while idle memories dampen toward `0.3x`.
 
-## 🔬 4. Deep-Dive Phase Breakdown
-
-### Phase 1: Core Memory Lifecycle
-- **What to show**: `client.add()`, `client.search()`, `client.update()`, `client.delete()`.
-- **Key Takeaway**: Raw dialogue goes in $\rightarrow$ Mem0 extracts clean facts $\rightarrow$ full CRUD control via `memory_id`.
-
-### Phase 2: RAG Generation & Multi-Entity Scoping
-- **What to show**: `answer_with_memory()` combining retrieval with LLM answer generation.
-- **Key Takeaway**: Segregating rules at `user_id` (personal preferences), `agent_id` (agent behavior), and `run_id` (session context).
-
-### Phase 3: Readpath & Score Distributions
-- **What to show**: Semantic relevance scoring ($0.05$ to $0.35$ scale) and score threshold filtering.
-- **Key Takeaway**: Combining custom threshold filtering with Top-K limits prevents prompt noise.
-
-### Phase 4: Temporal Decay & Reinforcement
-- **What it does**: Applies time-weighted recency and access frequency to search scores (`0.3x` dampening floor up to `1.5x` boost).
-- **What to show**:
-  1. `client.project.update(decay=False)` vs `client.project.update(decay=True)`.
-  2. Searching repeatedly for new facts (*"painting"*) to boost its score, while idle facts (*"pottery"*) decay.
-- **Key Takeaway**: Frequently accessed or recent memories naturally rise to the top of search results, while unaccessed memories dampen over time without being erased.
-
-### Phase 5: Automatic Operations (ADD / UPDATE / DELETE / NOOP)
-- **What to show**: Mem0's decision engine when receiving new facts that contradict or duplicate old memories.
-- **Key Takeaway**: Distinguishing when Mem0 updates automatically vs. when explicit `update()` calls are needed.
+### 5️⃣ Phase 5 — Automatic Operations ([mem0_friends_phase5_add_update_delete_noop.ipynb](file:///Users/sangeetha/SV-Summer2026/agents/lab/mem0_lite/docs/notebooks/mem0_friends_phase5_add_update_delete_noop.ipynb))
+- **Auto-Reconciliation**: Watch Mem0 classify incoming statements into `ADD`, `UPDATE`, `DELETE`, or `NOOP` when facts change or repeat.
 
 ---
 
-## 💡 Quick Reference: Correct API Cheat-Sheet
+## 💡 Quick API Cheat-Sheet
 
 ```python
 # 1. Store Memory (user_id is top-level)

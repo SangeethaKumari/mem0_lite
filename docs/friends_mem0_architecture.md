@@ -1,6 +1,32 @@
 # 🧠 Mem0 Friends Demo — Architecture & Component Diagram
 
-This document presents the system architecture, component layout, data flow, and read/write path lifecycles strictly for the **Mem0 Friends Demo Series (Phases 1–5)**.
+This document presents the system architecture, component layout, data flow, memory types, and read/write path lifecycles strictly for the **Mem0 Friends Demo Series (Phases 1–5)**.
+
+---
+
+## 🧠 Memory Scopes vs. Memory Types (`memory_type`)
+
+It is crucial to distinguish between **who a memory belongs to** (Entity Scope) and **what kind of memory it is** (Memory Type):
+
+```mermaid
+graph TD
+    subgraph Dimension1 ["1. Entity Scope (WHO / WHERE)"]
+        U_ID["user_id Scope<br/>Personal facts & preferences"]
+        A_ID["agent_id Scope<br/>Agent persona & behavioral guidelines"]
+        R_ID["run_id Scope<br/>Transient session context"]
+    end
+
+    subgraph Dimension2 ["2. Memory Type (WHAT KIND OF MEMORY)"]
+        SEM["Semantic Memory (DEFAULT)<br/>Extracted facts & knowledge<br/>e.g. 'Maya likes hiking'"]
+        EPI["Episodic Memory (DEFAULT)<br/>Events & conversation logs<br/>e.g. 'User hiked on Aug 1-2'"]
+        PRO["Procedural Memory (OPT-IN)<br/>Agent behavior & workflow rules<br/>Requires agent_id<br/>e.g. 'Always double check safety specs'"]
+    end
+```
+
+### Key Differences & Rules:
+- **Semantic & Episodic Memories (Default)**: Created automatically by `client.add()`. Mem0's extraction engine generates both during normal conversation processing.
+- **Procedural Memory (Opt-in)**: Created explicitly by passing `memory_type="procedural_memory"`.
+  - **Requirement**: **Requires `agent_id`**. Procedural memory defines *"how the assistant should behave"*, which is agent-scoped rather than person-scoped.
 
 ---
 
@@ -24,7 +50,7 @@ graph TB
     end
 
     subgraph MemoryPipelines ["Mem0 Pipeline Engine (Write & Read Paths)"]
-        WRITE_PATH["Write Path (add)<br/>• LLM Fact Summarizer<br/>• SentenceTransformers Embedding<br/>• Auto-Deduplication Engine"]
+        WRITE_PATH["Write Path (add)<br/>• LLM Fact Summarizer<br/>• SentenceTransformers Embedding<br/>• Auto-Deduplication Engine<br/>• Memory Types: Semantic, Episodic, Procedural"]
         READ_PATH["Read Path (search / get_all)<br/>• Cosine Vector Similarity<br/>• BM25 Keyword Scoring<br/>• Score Threshold & Top-K Cutoff<br/>• Temporal Decay Reranker (0.3x-1.5x)"]
         AUTO_OPS["Auto-Decision Engine<br/>• ADD | UPDATE | DELETE | NOOP"]
     end

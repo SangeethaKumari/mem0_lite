@@ -22,6 +22,32 @@ Throughout the demo, three friends illustrate strict user memory isolation:
 
 ---
 
+## 🧠 Memory Scopes vs. Memory Types (`memory_type`)
+
+It is crucial to distinguish between **who a memory belongs to** (Entity Scope) and **what kind of memory it is** (Memory Type):
+
+```mermaid
+graph TD
+    subgraph Dimension1 ["1. Entity Scope (WHO / WHERE)"]
+        U_ID["user_id Scope<br/>Personal facts & preferences"]
+        A_ID["agent_id Scope<br/>Agent persona & behavioral guidelines"]
+        R_ID["run_id Scope<br/>Transient session context"]
+    end
+
+    subgraph Dimension2 ["2. Memory Type (WHAT KIND OF MEMORY)"]
+        SEM["Semantic Memory (DEFAULT)<br/>Extracted facts & knowledge<br/>e.g. 'Maya likes hiking'"]
+        EPI["Episodic Memory (DEFAULT)<br/>Events & conversation logs<br/>e.g. 'User hiked on Aug 1-2'"]
+        PRO["Procedural Memory (OPT-IN)<br/>Agent behavior & workflow rules<br/>Requires agent_id<br/>e.g. 'Always double check safety specs'"]
+    end
+```
+
+### Key Differences & Rules:
+- **Semantic & Episodic Memories (Default)**: Created automatically by `client.add()`. You don't have to request them — Mem0's extraction engine generates both during normal conversation processing.
+- **Procedural Memory (Opt-in)**: Created explicitly by passing `memory_type="procedural_memory"`.
+  - **Requirement**: **Requires `agent_id`**. Procedural memory defines *"how the assistant should behave"*, which is agent-scoped rather than person-scoped.
+
+---
+
 ## 🏗️ High-Level Architecture Diagram
 
 ```mermaid
@@ -119,16 +145,23 @@ flowchart LR
 ## 💡 Quick API Cheat-Sheet
 
 ```python
-# 1. Store Memory (user_id is top-level)
+# 1. Store Semantic/Episodic Memory (Default - user_id is top-level)
 client.add("I'm learning pottery on Tuesdays.", user_id="maya")
 
-# 2. Get All Memories (user_id is inside filters dict)
+# 2. Store Procedural Memory (Opt-in - requires agent_id)
+client.add(
+    "Always double-check safety specifications.",
+    agent_id="maintenance_agent",
+    memory_type="procedural_memory",
+)
+
+# 3. Get All Memories (filters dict)
 client.get_all(filters={"user_id": "maya"})
 
-# 3. Search Memories (user_id is inside filters dict)
+# 4. Search Memories (filters dict)
 client.search("What are her hobbies?", filters={"user_id": "maya"})
 
-# 4. RAG Generation (Retrieve -> Inject -> Complete)
+# 5. RAG Generation (Retrieve -> Inject -> Complete)
 memories = client.search(question, filters={"user_id": user_id})
 answer = complete(f"Context:\n{memories}\n\nQuestion: {question}")
 ```

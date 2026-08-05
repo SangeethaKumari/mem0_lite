@@ -97,9 +97,12 @@ During the demo, three friends illustrate strict user memory isolation:
 - **What to show**: Semantic relevance scoring ($0.05$ to $0.35$ scale) and score threshold filtering.
 - **Key Takeaway**: Combining custom threshold filtering with Top-K limits prevents prompt noise.
 
-### Phase 4: Temporal Decay & Recency
-- **What to show**: How time weighting affects memory priority over days, weeks, and months.
-- **Key Takeaway**: Recent events naturally take priority over older historical memories.
+### Phase 4: Temporal Decay & Reinforcement
+- **What it does**: Applies time-weighted recency and access frequency to search scores (`0.3x` dampening floor up to `1.5x` boost).
+- **What to show**:
+  1. `client.project.update(decay=False)` vs `client.project.update(decay=True)`.
+  2. Searching repeatedly for new facts (*"painting"*) to boost its score, while idle facts (*"pottery"*) decay.
+- **Key Takeaway**: Frequently accessed or recent memories naturally rise to the top of search results, while unaccessed memories dampen over time without being erased.
 
 ### Phase 5: Automatic Operations (ADD / UPDATE / DELETE / NOOP)
 - **What to show**: Mem0's decision engine when receiving new facts that contradict or duplicate old memories.
